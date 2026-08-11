@@ -1,0 +1,52 @@
+# coopclock - example configuration
+#
+# Copy to config/coop.yaml and edit. config/coop.yaml is gitignored so your
+# device ID and location never end up in version control.
+#
+# Do not invent the offsets. Derive them from the times your door already uses
+# and that you are happy with:
+#
+#   coopclock calibrate --open 05:40 --close 21:35 \
+#       --lat 51.5558 --lon -1.7797 --tz Europe/London --date 2026-08-06
+#
+# That prints a ready-to-paste block for the two sections below.
+
+location:
+  name: My coop
+  latitude: 51.5074        # degrees north, negative for south
+  longitude: -0.1278       # degrees east, NEGATIVE FOR WEST
+  timezone: Europe/London  # IANA name, e.g. America/New_York
+
+offsets:
+  # Held constant year-round; the clock times move, the sun relationship does not.
+  open_after_sunrise_min: 3
+  close_after_sunset_min: 46
+  # Floor: never close before civil dusk + this, however the sunset offset lands.
+  # The sunset-to-civil-dusk gap varies seasonally, so a fixed sunset offset
+  # alone can fall short in midsummer and shut the door on late roosters.
+  close_min_after_civil_dusk_min: 5
+
+rounding_min: 5
+
+# Hard clamps. Set these just OUTSIDE your expected annual envelope - run
+# `coopclock almanac` to see it - so that a clamp firing is a real signal
+# rather than routine noise.
+bounds:
+  earliest_open: "04:30"
+  latest_open: "08:30"
+  earliest_close: "16:00"
+  latest_close: "22:30"
+  min_open_hours: 6
+  max_minutes_after_sunset: 60
+
+device:
+  # From the Omlet app: your door's settings screen.
+  device_id: YOUR_DEVICE_ID
+  name: My autodoor
+
+api:
+  base_url: https://x107.omlet.co.uk/api/v1
+  # The door wakes on its poll cycle (600s by default), so a write is not
+  # visible immediately. Verification waits for the device to check in.
+  verify_timeout_sec: 780
+  verify_interval_sec: 30

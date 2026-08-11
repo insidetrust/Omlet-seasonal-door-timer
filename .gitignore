@@ -1,0 +1,27 @@
+# Real configuration - contains your device ID and location. Never commit.
+config/*.yaml
+!config/example.yaml
+
+# Secrets
+.env
+*.env
+.omlet_key
+
+# Build artefacts
+build/
+*.zip
+dist/
+*.egg-info/
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

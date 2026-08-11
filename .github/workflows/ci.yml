@@ -1,0 +1,39 @@
+# Runs the test suite and linter on every push and pull request.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      # Fetch the repository into the runner's working directory.
+      - uses: actions/checkout@v4
+
+      # Install the requested Python and cache pip downloads between runs.
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      # Style and common-error checks. Fails the job on any finding.
+      - name: Lint
+        run: ruff check src tests
+
+      # The suite is offline - no API key or network access needed.
+      - name: Test
+        run: pytest -q
