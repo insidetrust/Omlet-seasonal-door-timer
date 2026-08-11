@@ -277,64 +277,29 @@ trend accrues locally.
 
 ---
 
-## 8. Power
+## 8. Power (deployment note)
 
-**This is the weakest part of any battery-powered deployment, and no scheduling change
-mitigates it.**
+Not a feature of the scheduler, but it determines whether any of it works.
 
-Omlet advise against rechargeable cells, and the reason is voltage rather than
-capacity. The fuel gauge maps an alkaline discharge curve:
+**A battery that dies while the door is open leaves it open all night.** Observed in
+practice: a pack fell below the WiFi threshold, the door kept operating locally from its
+RTC while unable to report, then went fully flat overnight and died in the open state,
+missing the next scheduled open. That is the exact exposure this project exists to
+prevent, arriving via power rather than scheduling, and no schedule change mitigates it.
 
-| Chemistry | Fresh | Discharge shape | 4-cell pack |
-| --- | --- | --- | --- |
-| Alkaline AA | 1.6 V | gradual decline to ~1.0 V | 6.4 → 4.0 V |
-| NiMH AA | ~1.4 V, settles 1.25 V | flat plateau, then cliff | ~5.0 → 4.8 V → cliff |
+**Rechargeables are a poor fit on WiFi.** Omlet advise against them; the reason is
+voltage, not capacity. The fuel gauge maps an alkaline curve (6.4 V fresh, declining to
+~4.0 V), while four NiMH cells sit near 5.0 V fully charged and hold a flat plateau
+before falling off a cliff. A fully charged NiMH pack therefore reads well under 100%
+and reaches the low-voltage cutoff — at which the firmware sheds the radio to preserve
+door operation — far sooner than the gauge implies.
 
-A fully charged NiMH pack reads ~74% rather than 100%, so the usable band before the
-firmware sheds the WiFi radio is **37 points instead of 63** — roughly 40% of the range
-gone before the first day. Surface charge also inflates the reading for a few hours
-after charging, so early "drain" is partly artefact.
-
-Observed in practice: ~10%/day against Omlet's ~1.7%/day spec, reaching WiFi dropout in
-under four days.
-
-**The coop light is not the culprit**, despite being a 1.5 W LED against a ~10–13 Wh
-pack — one hour would be 10–15% of capacity. The event log showed every on-period at
-~10 minutes, exactly `maxOnTime`, costing ~2%/night.
-
-### The failure that matters
-
-A flat battery does not merely break updates. Observed: the pack fell below the WiFi
-threshold, the door kept operating locally from its RTC while unable to report, then
-went fully flat overnight and **died in the open state**, missing the next scheduled
-open entirely.
-
-> **A battery that dies while the door is open leaves it open all night.** That is the
-> exact fox exposure this project exists to prevent, arriving via power rather than
-> scheduling. Mains or solar is the real fix.
-
-### Solar sizing
-
-The DC input is **12 V / 500 mA / 6 W max**, P1J barrel 2.1×5.5×11 mm, centre positive.
-Only doors bought after **April 2023** have the socket.
-
-Real load is ~0.2 Wh/day. Designing at 1 Wh/day for 5× margin, PVGIS for southern UK
-with 20 Wp at 60° tilt due south:
-
-| | Yield | Margin |
-| --- | --- | --- |
-| December average | 29 Wh/day | 29× |
-| Overcast week (~25% of average) | ~7 Wh/day | 7× |
-
-BOM ~£90–120: 20 Wp panel, PWM controller, 12 V 7 Ah SLA (~40 days autonomy), **12 V
-fixed buck regulator**, IP65 enclosure.
-
-> The regulator is **not optional**. A PWM controller passes raw battery voltage to the
-> load, reaching **14.4 V during absorption charge**, into a 12 V input.
-
-Omlet's published position is *"we do not recommend using a solar panel with your
-Autodoor."* That reads as a support-burden stance rather than a technical limit given a
-6 W ceiling, but the configuration is unsupported and self-owned.
+For unattended operation, external power (mains or solar) is the only durable answer.
+The DC input is **12 V / 500 mA / 6 W max**, P1J barrel 2.1×5.5×11 mm, centre positive;
+only doors bought after **April 2023** have the socket. Note that Omlet's published
+position is *"we do not recommend using a solar panel with your Autodoor"* — a solar
+build is unsupported and self-owned, and a PWM charge controller passing raw battery
+voltage (up to 14.4 V during absorption) into a 12 V input needs a regulator in between.
 
 ---
 

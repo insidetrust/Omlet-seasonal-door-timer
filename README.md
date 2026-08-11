@@ -10,13 +10,23 @@ after dark is a fox problem, not a comfort problem.
 `coopclock` computes the correct times each day from the position of the sun at your
 location and writes them to the door through Omlet's official API.
 
-```
-      Aug 06          fixed timer          coopclock
-      sunset 20:41    close 21:25 ✓        close 21:25 ✓
-      Dec 15
-      sunset 15:51    close 21:25 ✗        close 16:35 ✓
-                      5h34m after sunset   4 min after civil dusk
-```
+Set it once, and the door follows the year on its own:
+
+| | Sunrise | **Opens** | Sunset | **Closes** |
+|---|---|---|---|---|
+| 21 Jun | 04:43 | **04:45** | 21:21 | **22:15** |
+| 15 Aug | 05:45 | **05:50** | 20:24 | **21:10** |
+| 15 Oct | 07:23 | **07:25** | 18:08 | **18:55** |
+| 21 Dec | 08:03 | **08:05** | 15:53 | **16:40** |
+| 15 Mar | 06:15 | **06:20** | 18:03 | **18:50** |
+| 15 May | 05:09 | **05:10** | 20:44 | **21:30** |
+
+*Example location, 51.5°N. Open tracks sunrise, close tracks dusk — an 8h35m window in
+midwinter widening to 17h30m at midsummer, with no intervention and no manual edit at
+the clock changes.*
+
+Leave a fixed timer set to 21:25 instead, and by mid-December the door sits open
+**5h34m after sunset**.
 
 ---
 
@@ -191,16 +201,15 @@ Any clamp that fires is reported as an alert, not applied silently.
 
 ---
 
-## A note on batteries
+## If you run on batteries
 
-If you run the door on batteries and use WiFi, expect trouble with rechargeables.
-Omlet's own guidance is to avoid them, and the reason is voltage, not capacity: NiMH
-cells sit at 1.2 V against alkaline's 1.5 V, so a **fully charged** NiMH pack reads
-well under 100% on a gauge calibrated for alkaline, and reaches the low-voltage
-cutoff far sooner.
+Two things worth knowing, neither of which the scheduler can help with:
 
-More seriously: if the battery dies while the door is open, **it stays open**. No
-scheduler prevents that. Mains or solar power is the real fix.
+- **A battery that dies while the door is open leaves it open.** Mains or solar power
+  is the only real fix.
+- **Rechargeables cause trouble on WiFi.** Omlet advise against them, and the reason is
+  voltage not capacity — NiMH sits at 1.2 V against alkaline's 1.5 V, so a *fully
+  charged* pack already reads well under 100% on a gauge calibrated for alkaline.
 
 ---
 
