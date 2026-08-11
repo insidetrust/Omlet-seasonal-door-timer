@@ -112,8 +112,8 @@ secondary control — physical run security is the primary one.**
 ## Setup
 
 ```bash
-git clone https://github.com/insidetrust/coopclock.git
-cd coopclock
+git clone https://github.com/insidetrust/Omlet-seasonal-door-timer.git
+cd Omlet-seasonal-door-timer
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt && pip install -e .
 
