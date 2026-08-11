@@ -7,7 +7,7 @@
 # and that you are happy with:
 #
 #   coopclock calibrate --open 05:40 --close 21:35 \
-#       --lat 51.5558 --lon -1.7797 --tz Europe/London --date 2026-08-06
+#       --lat 51.5074 --lon -0.1278 --tz Europe/London --date 2026-08-06
 #
 # That prints a ready-to-paste block for the two sections below.
 

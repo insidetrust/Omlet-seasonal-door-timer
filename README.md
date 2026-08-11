@@ -12,10 +12,10 @@ location and writes them to the door through Omlet's official API.
 
 ```
       Aug 06          fixed timer          coopclock
-      sunset 20:48    close 21:35 ✓        close 21:35 ✓
+      sunset 20:41    close 21:25 ✓        close 21:25 ✓
       Dec 15
-      sunset 15:57    close 21:35 ✗        close 16:45 ✓
-                      5h38m after sunset   7 min after civil dusk
+      sunset 15:51    close 21:25 ✗        close 16:35 ✓
+                      5h34m after sunset   4 min after civil dusk
 ```
 
 ---
@@ -48,21 +48,21 @@ than enough. **Longitude is negative west of Greenwich.**
 
 ```bash
 coopclock calibrate --open 05:40 --close 21:35 \
-    --lat 51.5558 --lon -1.7797 --tz Europe/London --date 2026-08-06
+    --lat 51.5074 --lon -0.1278 --tz Europe/London --date 2026-08-06
 ```
 
 `--date` is the date those times were right for, because the answer depends on where
 the sun was that day.
 
 ```
-On 2026-08-06 at 51.5558, -1.7797 (BST):
+On 2026-08-06 at 51.5074, -0.1278 (BST):
 
-  civil dawn   04:58
-  sunrise      05:37
-  your open    05:40   = sunrise +3 min   (civil dawn +42 min)
-  sunset       20:48
-  civil dusk   21:27
-  your close   21:35   = sunset +47 min   (civil dusk +8 min)
+  civil dawn   04:51
+  sunrise      05:31
+  your open    05:40   = sunrise +9 min   (civil dawn +49 min)
+  sunset       20:41
+  civil dusk   21:20
+  your close   21:35   = sunset +54 min   (civil dusk +15 min)
 ```
 
 It prints a config block ready to paste, and warns you if the times you gave it are
@@ -226,6 +226,8 @@ ruff check src tests
 
 The suite includes year-long sweeps asserting the door never closes before civil dusk
 and that default bounds never fire — so that a clamp in production is meaningful.
+
+Design reasoning and API findings: [docs/DESIGN.md](docs/DESIGN.md).
 
 Not affiliated with or endorsed by Omlet Ltd.
 

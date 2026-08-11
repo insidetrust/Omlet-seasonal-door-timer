@@ -8,24 +8,33 @@ import pytest
 
 from coopclock.schedule import Bounds, Offsets, compute, date_range
 
-SWINDON = {"latitude": 51.5558, "longitude": -1.7797, "timezone": "Europe/London"}
+# Neutral example location (central London). Chosen so the fixture is
+# obviously illustrative and not anyone's home.
+EXAMPLE = {"latitude": 51.5074, "longitude": -0.1278, "timezone": "Europe/London"}
 
 
 def sched(day: date, **kwargs):
-    return compute(day=day, **SWINDON, **kwargs)
+    return compute(day=day, **EXAMPLE, **kwargs)
 
 
-class TestAnchorDay:
-    """The offsets must reproduce the door's original manual settings."""
+class TestKnownValues:
+    """Pins the calculation against hand-checked reference values."""
 
-    def test_reproduces_original_settings(self):
-        # PRD 3.2: on 06/08/2026 the door was manually set to 05:40 / 21:35.
+    def test_summer_reference_day(self):
         result = sched(date(2026, 8, 6))
-        assert result.open_time == "05:40"
-        assert result.close_time == "21:35"
+        assert (result.sunrise_local, result.sunset_local) == ("05:31", "20:41")
+        assert result.open_time == "05:35"
+        assert result.close_time == "21:25"
         assert result.tzname == "BST"
 
-    def test_no_clamp_on_anchor_day(self):
+    def test_winter_solstice(self):
+        result = sched(date(2026, 12, 21))
+        assert (result.sunrise_local, result.sunset_local) == ("08:03", "15:53")
+        assert result.open_time == "08:05"
+        assert result.close_time == "16:40"
+        assert result.tzname == "GMT"
+
+    def test_no_clamp_on_reference_day(self):
         assert sched(date(2026, 8, 6)).clamped == []
 
 
@@ -74,7 +83,7 @@ class TestRuleC:
     def test_rule_c_matches_plain_offset_in_autumn(self):
         # In autumn the sunset offset already clears dusk, so rule C is inert.
         result = sched(date(2026, 9, 15))
-        assert result.close_time == "20:10"
+        assert result.close_time == "20:05"
 
 
 class TestOpenTime:
@@ -140,7 +149,7 @@ class TestRounding:
 
     def test_rounding_can_be_disabled(self):
         result = sched(date(2026, 8, 6), rounding_min=1)
-        assert result.open_time == "05:41"
+        assert result.open_time == "05:34"
 
 
 class TestOffsets:

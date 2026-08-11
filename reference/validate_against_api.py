@@ -1,4 +1,4 @@
-"""Validate the offline NOAA calculator against api.sunrise-sunset.org for Swindon."""
+"""Validate the offline NOAA calculator against api.sunrise-sunset.org."""
 
 import json
 import subprocess
@@ -6,8 +6,10 @@ from datetime import date, datetime, timezone
 
 from solar import civil_dawn, civil_dusk, sunrise, sunset
 
-LAT, LON = 51.5558, -1.7797
+# Example location (central London) - change to your own.
+LAT, LON = 51.5074, -0.1278
 
+# Spread across both solstices and both UK DST transitions.
 SAMPLE_DATES = [
     date(2026, 1, 15),
     date(2026, 3, 29),   # BST starts
